@@ -1,0 +1,207 @@
+/* ===== Algorithm Page Styles ===== */
+
+.algo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.algo-card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all .3s cubic-bezier(.25,.8,.25,1);
+}
+
+.algo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,106,106,.12);
+}
+
+.algo-card-icon { font-size: 2rem; display: block; margin-bottom: 12px; }
+
+.algo-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.algo-card p {
+  font-size: .82rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.algo-card-arrow {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--primary);
+  transition: transform .2s;
+  display: inline-block;
+}
+
+.algo-card:hover .algo-card-arrow { transform: translateX(4px); }
+
+/* Detail View */
+.algo-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  margin-bottom: 32px;
+}
+
+.algo-hero-icon { font-size: 2.5rem; }
+
+.algo-hero h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.02em;
+}
+
+.algo-tag {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.algo-section {
+  margin-bottom: 32px;
+}
+
+.algo-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--surface);
+}
+
+.algo-section p {
+  font-size: .88rem;
+  color: var(--text2);
+  line-height: 1.8;
+}
+
+.algo-steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+}
+
+.algo-steps li {
+  counter-increment: step;
+  padding: 12px 16px 12px 52px;
+  margin-bottom: 8px;
+  background: var(--card);
+  border-radius: var(--r);
+  font-size: .85rem;
+  color: var(--text2);
+  line-height: 1.6;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,.03);
+}
+
+.algo-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-c));
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.features-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feature-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--text2);
+  transition: all .2s;
+}
+
+.feature-chip:hover {
+  background: rgba(0,101,101,.1);
+  color: var(--primary);
+}
+
+.metric-card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.metric-card h4 {
+  font-size: .9rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.metric-card p {
+  font-size: .82rem;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.formula-box {
+  background: #0a1a1a;
+  color: #a7f3d0;
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-size: .8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.formula-box strong { color: #6ee7b7; }
+.formula-box code { font-family: 'Courier New', monospace; font-size: .82rem; }
+
+.main-formula {
+  padding: 20px 24px;
+  font-size: .9rem;
+  text-align: center;
+}
+
+.main-formula code { font-size: .95rem; }
+
+.formula-note {
+  margin-top: 12px;
+  font-size: .82rem;
+  color: var(--text2);
+  line-height: 1.7;
+  font-style: italic;
+}

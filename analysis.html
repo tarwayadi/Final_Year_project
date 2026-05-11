@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithm Analysis — EATSD Visualizer</title>
+<meta name="description" content="Individual algorithm analysis with interactive charts for FCFS, EDF, DEELDPQ-SAPSO, and EATSD.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Full-width algorithm selector bar */
+  .algo-bar {
+    display: flex;
+    width: 100%;
+    background: var(--card);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 6px;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .algo-bar .tab-btn {
+    flex: 1;
+    padding: 14px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--text2);
+    transition: all .25s ease;
+    text-align: center;
+  }
+
+  .algo-bar .tab-btn:hover {
+    background: var(--surface);
+    color: var(--primary);
+  }
+
+  .algo-bar .tab-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-c));
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0, 101, 101, .25);
+  }
+
+  /* Dynamic heading */
+  .analysis-heading {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .analysis-heading h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+
+  .analysis-heading h2 .algo-name-highlight {
+    color: var(--primary);
+  }
+
+  .analysis-heading p {
+    font-size: .9rem;
+    color: var(--text2);
+    margin-top: 8px;
+  }
+
+  /* Vertical full-width chart stack */
+  .chart-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .chart-stack .chart-card {
+    width: 100%;
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .chart-stack .chart-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--surface);
+  }
+
+  .chart-stack .chart-wrap {
+    position: relative;
+    height: 420px;
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .algo-bar {
+      flex-wrap: wrap;
+    }
+    .algo-bar .tab-btn {
+      flex: 1 1 45%;
+    }
+    .chart-stack .chart-wrap {
+      height: 300px;
+    }
+  }
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo">EATSD Visualizer<span>Cloud Task Scheduling</span></div>
+  <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+  <a href="algorithms.html"><span class="icon">📊</span><span>Algorithms</span></a>
+  <a href="analysis.html" class="active"><span class="icon">🔬</span><span>Algorithm Analysis</span></a>
+  <a href="comparative.html"><span class="icon">⚖️</span><span>Comparative Study</span></a>
+  <a href="pir.html"><span class="icon">📈</span><span>PIR% Table</span></a>
+  <a href="execution.html"><span class="icon">⚡</span><span>Execution &amp; Scale</span></a>
+  <a href="custom.html"><span class="icon">🧪</span><span>My Algorithm</span></a>
+</nav>
+<main id="main-content">
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <!-- Full-width algorithm selector bar -->
+  <div class="algo-bar" id="algo-tabs">
+    <button class="tab-btn" data-algo="FCFS" onclick="switchAlgo('FCFS')">FCFS</button>
+    <button class="tab-btn" data-algo="EDF" onclick="switchAlgo('EDF')">EDF</button>
+    <button class="tab-btn" data-algo="DEELDPQ-SAPSO" onclick="switchAlgo('DEELDPQ-SAPSO')">DEELDPQ-SAPSO</button>
+    <button class="tab-btn active" data-algo="EATSD" onclick="switchAlgo('EATSD')">EATSD</button>
+    <button class="tab-btn" data-algo="NEW_ALGO" onclick="switchAlgo('NEW_ALGO')">NEW_ALGO</button>
+  </div>
+
+  <!-- Dynamic heading -->
+  <div class="analysis-heading">
+    <h2><span class="algo-name-highlight" id="algo-title">EATSD</span> Algorithm Analysis</h2>
+    <p id="algo-subtitle">Performance metrics for the selected algorithm highlighted against others (shown as faint reference lines).</p>
+  </div>
+
+  <!-- Vertically stacked full-width charts -->
+  <div class="chart-stack">
+    <div class="chart-card">
+      <h4>📉 Makespan vs Number of Tasks</h4>
+      <div class="chart-wrap"><canvas id="indiv-makespan"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h4>⚡ Energy Consumption (Watts) vs Number of Tasks</h4>
+      <div class="chart-wrap"><canvas id="indiv-energy"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h4>📊 Resource Utilization vs Number of Tasks</h4>
+      <div class="chart-wrap"><canvas id="indiv-resource"></canvas></div>
+    </div>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const ALGO_FULL_NAMES = {
+  'FCFS': 'FCFS (First Come First Served)',
+  'EDF': 'EDF (Earliest Deadline First)',
+  'DEELDPQ-SAPSO': 'DEELDPQ-SAPSO',
+  'EATSD': 'EATSD (Energy-Aware Task Scheduling)',
+  'NEW_ALGO': 'NEW_ALGO (Custom Algorithm)'
+};
+
+const ALL_ALGOS = ['FCFS', 'EDF', 'DEELDPQ-SAPSO', 'EATSD', 'NEW_ALGO'];
+
+let activeAlgo = 'EATSD';
+
+function switchAlgo(algo) {
+  activeAlgo = algo;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.algo === algo));
+  document.getElementById('algo-title').textContent = ALGO_FULL_NAMES[algo] || algo;
+  renderIndividual();
+}
+
+function renderIndividual() {
+  ['makespan', 'energy', 'resource'].forEach(metric => {
+    const ds = [];
+    ALL_ALGOS.forEach(a => {
+      if (!D[metric][a]) return;
+      if (a === activeAlgo) ds.push(mkDataset(a, D[metric][a], C[a] || C.custom, { bold: true, dash: DASH[a] || [] }));
+      else ds.push(mkGhost(a, D[metric][a]));
+    });
+    const yL = metric === 'makespan' ? 'Makespan' : metric === 'energy' ? 'Energy (Watts)' : 'Resource Utilization';
+    makeChart('indiv-' + metric, LABELS5, ds, yL);
+  });
+}
+
+renderIndividual();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
