@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Algorithm — EATSD Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo">EATSD Visualizer<span>Cloud Task Scheduling</span></div>
+  <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+  <a href="algorithms.html"><span class="icon">📊</span><span>Algorithms</span></a>
+  <a href="analysis.html"><span class="icon">🔬</span><span>Algorithm Analysis</span></a>
+  <a href="comparative.html"><span class="icon">⚖️</span><span>Comparative Study</span></a>
+  <a href="pir.html"><span class="icon">📈</span><span>PIR% Table</span></a>
+  <a href="execution.html"><span class="icon">⚡</span><span>Execution &amp; Scale</span></a>
+  <a href="custom.html" class="active"><span class="icon">🧪</span><span>My Algorithm</span></a>
+</nav>
+<main id="main-content">
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <section id="sec-custom">
+    <div class="section-header"><h2>My Custom Algorithm</h2><p>Enter your algorithm's performance data to compare it against all others across every chart and table.</p></div>
+    <form id="custom-form" class="card" onsubmit="return submitCustom(event)">
+      <div class="form-group"><label>Algorithm Name</label><div class="form-row"><input type="text" id="c-name" placeholder="e.g. MyScheduler" required></div></div>
+      <div class="grid-3">
+        <div class="form-group"><label>Makespan (20,40,60,80,100 tasks)</label><div class="form-row"><input type="number" id="c-m1" placeholder="20"><input type="number" id="c-m2" placeholder="40"><input type="number" id="c-m3" placeholder="60"><input type="number" id="c-m4" placeholder="80"><input type="number" id="c-m5" placeholder="100"></div></div>
+        <div class="form-group"><label>Energy (20,40,60,80,100 tasks)</label><div class="form-row"><input type="number" id="c-e1" placeholder="20"><input type="number" id="c-e2" placeholder="40"><input type="number" id="c-e3" placeholder="60"><input type="number" id="c-e4" placeholder="80"><input type="number" id="c-e5" placeholder="100"></div></div>
+        <div class="form-group"><label>Resource Util. (20,40,60,80,100)</label><div class="form-row"><input type="number" step="0.01" id="c-r1" placeholder="20"><input type="number" step="0.01" id="c-r2" placeholder="40"><input type="number" step="0.01" id="c-r3" placeholder="60"><input type="number" step="0.01" id="c-r4" placeholder="80"><input type="number" step="0.01" id="c-r5" placeholder="100"></div></div>
+      </div>
+      <div><button type="submit" class="btn-primary">Compare My Algorithm vs EATSD</button><button type="button" class="btn-danger" onclick="removeCustom()">Reset</button></div>
+    </form>
+    <div id="custom-result"><div class="insight-card" id="custom-pir-summary"></div></div>
+    <div id="custom-charts" style="display:none;margin-top:32px">
+      <h3 class="sub-header">Your Algorithm vs All Others</h3>
+      <div class="grid-3">
+        <div class="chart-card"><h4>Makespan Comparison</h4><div class="chart-wrap"><canvas id="cust-makespan"></canvas></div></div>
+        <div class="chart-card"><h4>Energy Comparison</h4><div class="chart-wrap"><canvas id="cust-energy"></canvas></div></div>
+        <div class="chart-card"><h4>Resource Utilization</h4><div class="chart-wrap"><canvas id="cust-resource"></canvas></div></div>
+      </div>
+    </div>
+    <div id="pir-custom-row" style="margin-top:16px"></div>
+  </section>
+</main>
+<script src="data.js"></script>
+<script>
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function submitCustom(e){
+  e.preventDefault();
+  const name=document.getElementById('c-name').value||'MyAlgo';
+  const customData={
+    name,
+    makespan:[gv('c-m1'),gv('c-m2'),gv('c-m3'),gv('c-m4'),gv('c-m5')],
+    energy:[gv('c-e1'),gv('c-e2'),gv('c-e3'),gv('c-e4'),gv('c-e5')],
+    resource:[gv('c-r1'),gv('c-r2'),gv('c-r3'),gv('c-r4'),gv('c-r5')]
+  };
+  // Render comparison charts
+  document.getElementById('custom-charts').style.display='block';
+  ['makespan','energy','resource'].forEach(metric=>{
+    const ds=ALGOS4.map(a=>mkDataset(a,D[metric][a],C[a],{bold:a==='EATSD',dash:DASH[a]}));
+    ds.push(mkDataset(customData.name,customData[metric],C.custom,{bold:true,dash:[5,5]}));
+    const yL=metric==='makespan'?'Makespan':metric==='energy'?'Energy (Watts)':'Resource Utilization';
+    makeChart('cust-'+metric,LABELS5,ds,yL);
+  });
+  // PIR summary
+  const eatsd={makespan:D.makespan.EATSD,energy:D.energy.EATSD,resource:D.resource.EATSD};
+  const pir=(base,test)=>{const avg=a=>a.reduce((s,v)=>s+v,0)/a.length;const b=avg(base),t=avg(test);return((b-t)/b*100).toFixed(2);};
+  const mP=pir(eatsd.makespan,customData.makespan),eP=pir(eatsd.energy,customData.energy),rP=pir(eatsd.resource,customData.resource);
+  document.getElementById('custom-result').style.display='block';
+  document.getElementById('custom-pir-summary').innerHTML=
+    `🧪 <strong>${customData.name} vs EATSD — PIR%:</strong> Makespan: ${mP}% | Energy: ${eP}% | Resource Util: ${rP}%<br><em>Positive = your algo is better; Negative = EATSD is better.</em>`;
+  const cls=v=>{const n=parseFloat(v);return n>30?'pir-green':n>10?'pir-yellow':'pir-white';};
+  document.getElementById('pir-custom-row').innerHTML=`<div class="table-scroll"><table class="data-table"><thead><tr><th>Metric</th><th>EATSD Avg</th><th>${customData.name} Avg</th><th>PIR% vs EATSD</th></tr></thead><tbody>
+    <tr><td>Makespan</td><td>${(eatsd.makespan.reduce((a,b)=>a+b)/5).toFixed(1)}</td><td>${(customData.makespan.reduce((a,b)=>a+b)/5).toFixed(1)}</td><td class="${cls(mP)}">${mP}%</td></tr>
+    <tr><td>Energy</td><td>${(eatsd.energy.reduce((a,b)=>a+b)/5).toFixed(1)}</td><td>${(customData.energy.reduce((a,b)=>a+b)/5).toFixed(1)}</td><td class="${cls(eP)}">${eP}%</td></tr>
+    <tr><td>Resource Util.</td><td>${(eatsd.resource.reduce((a,b)=>a+b)/5).toFixed(3)}</td><td>${(customData.resource.reduce((a,b)=>a+b)/5).toFixed(3)}</td><td class="${cls(rP)}">${rP}%</td></tr>
+  </tbody></table></div>`;
+  return false;
+}
+function removeCustom(){
+  document.getElementById('custom-result').style.display='none';
+  document.getElementById('custom-charts').style.display='none';
+  document.getElementById('pir-custom-row').innerHTML='';
+}
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
