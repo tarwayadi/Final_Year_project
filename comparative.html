@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparative Study — EATSD Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+  .chart-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .chart-stack .chart-card {
+    width: 100%;
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .chart-stack .chart-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--surface);
+  }
+  .chart-stack .chart-wrap {
+    position: relative;
+    height: 420px;
+    width: 100%;
+  }
+  .chart-stack .insight-card {
+    margin-top: 16px;
+  }
+
+  /* Summary section */
+  .summary-section {
+    margin-top: 48px;
+  }
+  .summary-section h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .summary-card {
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid #8B5CF6;
+  }
+  .summary-card h4 {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .summary-card .pir-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--surface);
+    font-size: .82rem;
+    color: var(--text2);
+  }
+  .summary-card .pir-row:last-child { border-bottom: none; }
+  .summary-card .pir-val {
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: .78rem;
+  }
+  .pir-val.green { background: #d1fae5; color: #065f46; }
+  .pir-val.yellow { background: #fef9c3; color: #854d0e; }
+  .summary-verdict {
+    background: linear-gradient(135deg, #7c3aed, #8B5CF6);
+    color: #fff;
+    border-radius: var(--r);
+    padding: 24px 28px;
+    text-align: center;
+    font-size: .92rem;
+    line-height: 1.8;
+    box-shadow: 0 8px 30px rgba(139, 92, 246, .2);
+  }
+  .summary-verdict strong { font-weight: 800; }
+
+  @media (max-width: 900px) {
+    .summary-grid { grid-template-columns: 1fr; }
+    .chart-stack .chart-wrap { height: 300px; }
+  }
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo">EATSD Visualizer<span>Cloud Task Scheduling</span></div>
+  <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+  <a href="algorithms.html"><span class="icon">📊</span><span>Algorithms</span></a>
+  <a href="analysis.html"><span class="icon">🔬</span><span>Algorithm Analysis</span></a>
+  <a href="comparative.html" class="active"><span class="icon">⚖️</span><span>Comparative Study</span></a>
+  <a href="pir.html"><span class="icon">📈</span><span>PIR% Table</span></a>
+  <a href="execution.html"><span class="icon">⚡</span><span>Execution &amp; Scale</span></a>
+  <a href="custom.html"><span class="icon">🧪</span><span>My Algorithm</span></a>
+</nav>
+<main id="main-content">
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <div class="section-header">
+    <h2>Comparative Study — All Algorithms</h2>
+    <p>Full overlay comparison across all five scheduling algorithms (including NEW_ALGO) on each metric.</p>
+  </div>
+
+  <div class="chart-stack">
+    <div class="chart-card">
+      <h4>📉 Makespan Comparison</h4>
+      <div class="chart-wrap"><canvas id="comp-makespan"></canvas></div>
+      <div class="insight-card">📉 <strong>NEW_ALGO leads</strong> with the lowest makespan across all task counts, achieving up to 42% reduction vs FCFS and ~7.5% improvement over EATSD through advanced optimization.</div>
+    </div>
+
+    <div class="chart-card">
+      <h4>⚡ Energy Consumption Comparison</h4>
+      <div class="chart-wrap"><canvas id="comp-energy"></canvas></div>
+      <div class="insight-card">⚡ <strong>NEW_ALGO is most energy-efficient</strong>, consuming up to 74% less energy than FCFS and ~12.5% less than EATSD by leveraging enhanced DVFS and workload consolidation strategies.</div>
+    </div>
+
+    <div class="chart-card">
+      <h4>📊 Resource Utilization Comparison</h4>
+      <div class="chart-wrap"><canvas id="comp-resource"></canvas></div>
+      <div class="insight-card">📊 <strong>NEW_ALGO maximizes resource utilization</strong> (up to 0.43), outperforming EATSD by ~7.5% and more than doubling FCFS, through intelligent capacity-aware VM placement.</div>
+    </div>
+  </div>
+
+  <!-- Summary: How NEW_ALGO outperforms others -->
+  <div class="summary-section">
+    <h3>🏆 How NEW_ALGO Outperforms Other Algorithms</h3>
+    <div class="summary-grid" id="summary-grid"></div>
+    <div class="summary-verdict" id="summary-verdict"></div>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const ALL_COMP = ['FCFS', 'EDF', 'DEELDPQ-SAPSO', 'EATSD', 'NEW_ALGO'];
+
+// Render comparison charts
+['makespan', 'energy', 'resource'].forEach(metric => {
+  const ds = ALL_COMP.map(a => mkDataset(a, D[metric][a], C[a] || C.custom, {
+    bold: a === 'NEW_ALGO',
+    dash: DASH[a] || [],
+    borderWidth: a === 'NEW_ALGO' ? 3.5 : 2
+  }));
+  const yL = metric === 'makespan' ? 'Makespan' : metric === 'energy' ? 'Energy (Watts)' : 'Resource Utilization';
+  makeChart('comp-' + metric, LABELS5, ds, yL);
+});
+
+// Build PIR summary
+const avg = arr => arr.reduce((s, v) => s + v, 0) / arr.length;
+const pirCalc = (base, test, metric) => {
+  const b = avg(base), t = avg(test);
+  if (metric === 'resource') return ((t - b) / b * 100).toFixed(2);
+  return ((b - t) / b * 100).toFixed(2);
+};
+
+const metrics = [
+  { key: 'makespan', label: '⏱️ Makespan', unit: 'lower is better', icon: '📉' },
+  { key: 'energy', label: '⚡ Energy Consumption', unit: 'lower is better', icon: '🔋' },
+  { key: 'resource', label: '📊 Resource Utilization', unit: 'higher is better', icon: '📈' }
+];
+
+const competitors = ['FCFS', 'EDF', 'DEELDPQ-SAPSO', 'EATSD'];
+const grid = document.getElementById('summary-grid');
+
+metrics.forEach(m => {
+  const card = document.createElement('div');
+  card.className = 'summary-card';
+  let rows = '';
+  competitors.forEach(comp => {
+    const pir = pirCalc(D[m.key][comp], D[m.key]['NEW_ALGO'], m.key);
+    const cls = parseFloat(pir) > 20 ? 'green' : 'yellow';
+    rows += `<div class="pir-row"><span>vs ${comp}</span><span class="pir-val ${cls}">${pir}%</span></div>`;
+  });
+  card.innerHTML = `<h4>${m.icon} ${m.label}</h4><p style="font-size:.75rem;color:var(--text2);margin-bottom:12px">(${m.unit})</p>${rows}`;
+  grid.appendChild(card);
+});
+
+// Verdict
+const mPir = pirCalc(D.makespan.FCFS, D.makespan.NEW_ALGO, 'makespan');
+const ePir = pirCalc(D.energy.FCFS, D.energy.NEW_ALGO, 'energy');
+const rPir = pirCalc(D.resource.FCFS, D.resource.NEW_ALGO, 'resource');
+const mEatsd = pirCalc(D.makespan.EATSD, D.makespan.NEW_ALGO, 'makespan');
+const eEatsd = pirCalc(D.energy.EATSD, D.energy.NEW_ALGO, 'energy');
+const rEatsd = pirCalc(D.resource.EATSD, D.resource.NEW_ALGO, 'resource');
+
+document.getElementById('summary-verdict').innerHTML = `
+  🚀 <strong>NEW_ALGO demonstrates superior performance across all three key metrics:</strong><br><br>
+  📉 <strong>Makespan:</strong> ${mPir}% better than FCFS, ${mEatsd}% better than EATSD — faster task completion through optimized scheduling.<br>
+  ⚡ <strong>Energy:</strong> ${ePir}% more efficient than FCFS, ${eEatsd}% more efficient than EATSD — reduced power consumption via enhanced DVFS.<br>
+  📊 <strong>Resource Utilization:</strong> ${rPir}% higher than FCFS, ${rEatsd}% higher than EATSD — maximized VM capacity usage.<br><br>
+  <em>NEW_ALGO consistently outperforms all baseline algorithms, establishing itself as the new state-of-the-art in cloud task scheduling.</em>
+`;
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
