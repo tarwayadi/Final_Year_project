@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIR% Table — EATSD Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav id="sidebar">
+  <div class="logo">EATSD Visualizer<span>Cloud Task Scheduling</span></div>
+  <a href="index.html"><span class="icon">🏠</span><span>Home</span></a>
+  <a href="algorithms.html"><span class="icon">📊</span><span>Algorithms</span></a>
+  <a href="analysis.html"><span class="icon">🔬</span><span>Algorithm Analysis</span></a>
+  <a href="comparative.html"><span class="icon">⚖️</span><span>Comparative Study</span></a>
+  <a href="pir.html" class="active"><span class="icon">📈</span><span>PIR% Table</span></a>
+  <a href="execution.html"><span class="icon">⚡</span><span>Execution &amp; Scale</span></a>
+  <a href="custom.html"><span class="icon">🧪</span><span>My Algorithm</span></a>
+</nav>
+<main id="main-content">
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <section id="sec-pir">
+    <div class="section-header">
+      <h2>Performance Improvement Rate (PIR%)</h2>
+      <p>Quantitative comparison showing how much each algorithm improves over the others.</p>
+    </div>
+    <div class="table-scroll"><table class="data-table" id="pir-table">
+    <thead><tr><th>Metric</th><th>Baseline</th><th>FCFS</th><th>EDF</th><th>DEELDPQ-SAPSO</th><th class="col-eatsd">EATSD ★</th></tr></thead>
+    <tbody>
+    <tr><td rowspan="4" style="font-weight:700;background:#f1f4f3">Makespan</td><td style="background:#f1f4f3">Total Avg</td><td>24320.72</td><td>20557.83</td><td>17891.72</td><td class="col-eatsd">16324.88</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over FCFS</td><td>—</td><td class="pir-yellow">15.47%</td><td class="pir-yellow">26.43%</td><td class="col-eatsd pir-green">32.88%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over EDF</td><td>—</td><td>—</td><td class="pir-yellow">12.97%</td><td class="col-eatsd pir-yellow">20.59%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over DEELDPQ</td><td>—</td><td>—</td><td>—</td><td class="col-eatsd pir-white">8.76%</td></tr>
+    <tr><td rowspan="4" style="font-weight:700;background:#f1f4f3">Resource Util.</td><td style="background:#f1f4f3">Total Avg</td><td>0.93</td><td>1.09</td><td>1.36</td><td class="col-eatsd">1.45</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over FCFS</td><td>—</td><td class="pir-yellow">14.91%</td><td class="pir-green">32.01%</td><td class="col-eatsd pir-green">36.23%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over EDF</td><td>—</td><td>—</td><td class="pir-yellow">25.16%</td><td class="col-eatsd pir-yellow">25.06%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over DEELDPQ</td><td>—</td><td>—</td><td>—</td><td class="col-eatsd pir-white">6.20%</td></tr>
+    <tr><td rowspan="4" style="font-weight:700;background:#f1f4f3">Energy</td><td style="background:#f1f4f3">Total Avg</td><td>13881</td><td>9032</td><td>7167</td><td class="col-eatsd">4736</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over FCFS</td><td>—</td><td class="pir-green">34.93%</td><td class="pir-green">48.37%</td><td class="col-eatsd pir-green">65.88%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over EDF</td><td>—</td><td>—</td><td class="pir-yellow">20.65%</td><td class="col-eatsd pir-green">47.56%</td></tr>
+    <tr><td style="background:#f1f4f3">PIR over DEELDPQ</td><td>—</td><td>—</td><td>—</td><td class="col-eatsd pir-green">33.92%</td></tr>
+    </tbody>
+    </table></div>
+  </section>
+</main>
+<script src="theme.js"></script>
+</body>
+</html>
